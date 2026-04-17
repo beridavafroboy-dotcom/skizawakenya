@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skiza Wakenya - Report & Fix Problems</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+            margin: 0;
+        }
+
+        header {
+            background: white;
+            padding: 10px;
+            box-shadow: 0 2px 5px gray;
+        }
+
+        header img {
+            max-width: 180px;
+        }
+
+        h1 { color: green; }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px gray;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .primary { background: green; color: white; }
+        .share { background: #007bff; color: white; }
+        .viral { background: red; color: white; }
+        .contact { background: orange; color: white; }
+
+        img.uploaded {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <img src="logo.png">
+    <h1>Skiza Wakenya</h1>
+    <p>Report Problems • Get Action • Build Kenya</p>
+</header>
+
+<div class="container">
+
+    <!-- VIRAL SHARE -->
+    <button class="viral" onclick="shareApp()">🚀 Share This Platform</button>
+
+    <br><br>
+
+    <input type="text" id="problemInput" placeholder="Describe the problem..." size="35"><br><br>
+    <input type="file" id="imageInput"><br><br>
+    <button class="primary" onclick="submitProblem()">Submit Problem</button>
+
+    <h2>Community Issues</h2>
+    <div id="problemsList"></div>
+
+</div>
+
+<footer>
+    <p>Contact Admin</p>
+
+    <button class="contact" onclick="contactWhatsApp()">WhatsApp</button>
+    <button class="contact" onclick="contactCall()">Call</button>
+    <button class="contact" onclick="contactEmail()">Email</button>
+    <button class="contact" onclick="contactFacebook()">Facebook</button>
+
+</footer>
+
+<script>
+
+// ADMIN DETAILS
+const phone = "254740182754";
+const email = "beridavafroboy@gmail.com";
+const facebookLink = "https://m.me/yourusername"; // 🔥 replace with your FB username
+
+const badWords = ["stupid","idiot","fuck","shit"];
+
+// 🔥 SHARE PLATFORM
+function shareApp() {
+
+    let url = window.location.href;
+
+    let text = "🇰🇪 Skiza Wakenya Platform\n\nReport problems in your area and get action!\n\nJoin here:\n" + url;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Skiza Wakenya",
+            text: text,
+            url: url
+        });
+    } else {
+        copyText(text);
+        alert("Copied! Share on WhatsApp/Facebook.");
+    }
+}
+
+// Copy fallback
+function copyText(text) {
+    navigator.clipboard.writeText(text);
+}
+
+// Submit problem
+function submitProblem() {
+    let text = document.getElementById("problemInput").value;
+    let image = document.getElementById("imageInput").files[0];
+
+    if (text === "") {
+        alert("Enter a problem");
+        return;
+    }
+
+    if (badWords.some(word => text.toLowerCase().includes(word))) {
+        alert("Avoid vulgar language");
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        displayProblem(text, e.target.result);
+    }
+
+    if (image) {
+        reader.readAsDataURL(image);
+    } else {
+        displayProblem(text, null);
+    }
+
+    document.getElementById("problemInput").value = "";
+    document.getElementById("imageInput").value = "";
+}
+
+// Display problem
+function displayProblem(text, imageSrc) {
+
+    let div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+        <p>${text}</p>
+        ${imageSrc ? `<img class="uploaded" src="${imageSrc}">` : ""}
+        <p>Votes: <span class="voteCount">0</span></p>
+
+        <button onclick="vote(this)">👍 Support</button>
+        <button class="share" onclick="shareProblem('${encodeURIComponent(text)}')">Share</button>
+    `;
+
+    document.getElementById("problemsList").prepend(div);
+}
+
+// Vote
+function vote(btn) {
+    let span = btn.parentElement.querySelector(".voteCount");
+    span.innerText = parseInt(span.innerText) + 1;
+}
+
+// Share individual problem
+function shareProblem(problem) {
+
+    let decoded = decodeURIComponent(problem);
+    let url = window.location.href;
+
+    let text = "🇰🇪 I reported this issue:\n\n" + decoded + "\n\nJoin here:\n" + url;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Skiza Wakenya",
+            text: text,
+            url: url
+        });
+    } else {
+        copyText(text);
+        alert("Copied! Share it.");
+    }
+}
+
+// CONTACT FUNCTIONS
+
+function contactWhatsApp() {
+    let msg = "Hello Admin, I want to report or follow up on a community issue.";
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+function contactCall() {
+    window.location.href = "tel:+254740182754";
+}
+
+function contactEmail() {
+    window.location.href = "mailto:" + email;
+}
+
+function contactFacebook() {
+    window.open(facebookLink, "_blank");
+}
+
+</script>
+
+</body>
+</html>
+</html>
